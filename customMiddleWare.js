@@ -1,6 +1,3 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-
 const logger = (req, res, next) => {
 
     const start = Date.now();
