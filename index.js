@@ -1,8 +1,11 @@
+const logger = require('./customMiddleWare');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
 app.use(bodyParser.json()); // Use body-parser middleware to parse JSON bodies
+app.use(logger);
 
 const courses = {
     1: {
@@ -67,19 +70,16 @@ app.put('/courses/:id', (req, res) => {
     res.json(updatedCourse);
 }); */
 
-app.post('/courses', (req, res) => {
-    const newCourses = req.body;
-    if (!Array.isArray(newCourses)) {
-        return res.status(400).json({ error: 'Expected an array of courses' });
+
+app.put('/courses/:id', (req, res) => {
+    const courseId = req.params.id;
+    if (!courses[courseId]) {
+        return res.status(404).json({ error: 'Course not found' });
     }
-
-    newCourses.forEach(course => {
-        const newId = Object.keys(courses).length + 1;
-        course.id = newId;
-        courses[newId] = course;
-    });
-
-    res.status(201).json(newCourses);
+    const updatedCourse = req.body;
+    updatedCourse.id = parseInt(courseId); // Ensure the ID is not changed
+    courses[courseId] = updatedCourse;
+    res.json(updatedCourse);
 });
 
 // Start the server
